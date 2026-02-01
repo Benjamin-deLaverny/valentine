@@ -2,11 +2,18 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mon mini site</title>
+  <title>Valentine</title>
 </head>
 <body>
   <h1>Salut Ines</h1>
   <p>Veux-tu être ma valentine ?</p>
-  <button type="button">OUI</button>
+  <button type="button" onclick="changeText()">OUI</button>
+  <p id="displayTextHere"></p>
+  <script>
+      // Define the JavaScript function
+      function changeText() {
+          document.getElementById('displayTextHere').innerHTML = "Moi aussi <3";
+      }
+  </script>
 </body>
 </html>
