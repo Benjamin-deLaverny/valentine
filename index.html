@@ -1,19 +1,136 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Valentine</title>
+<meta charset="UTF-8">
+<title>Valentine</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+    overflow: hidden;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+  }
+
+  button {
+    font-size: 20px;
+    padding: 12px 25px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  /* Tremblement du bouton NON */
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+  }
+
+  #noBtn {
+    animation: shake 0.4s infinite;
+  }
+
+  #counter {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+
+  /* Cœurs */
+  .heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 24px;
+    animation: floatUp 3s linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes floatUp {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100vh);
+      opacity: 0;
+    }
+  }
+</style>
 </head>
+
 <body>
-  <h1>Salut Ines</h1>
-  <p>Veux-tu être ma valentine ?</p>
-  <button type="button" onclick="changeText()">OUI</button>
-  <p id="displayTextHere"></p>
-  <script>
-      // Define the JavaScript function
-      function changeText() {
-          document.getElementById('displayTextHere').innerHTML = "Moi aussi <3";
-      }
-  </script>
+
+<h1>Salut Ines</h1>
+<p>Veux-tu être ma valentine ?</p>
+
+<div class="buttons" id="buttonContainer">
+  <button id="yesBtn" onclick="yesClick()">OUI</button>
+  <button id="noBtn" onclick="noClick()">NON</button>
+</div>
+
+<p id="counter">Clics sur NON : 0 / 100</p>
+<p id="displayTextHere"></p>
+
+<script>
+  let noClicks = 0;
+  let swapped = false;
+  let yesScale = 1;
+
+  function yesClick() {
+    document.getElementById('displayTextHere').innerHTML = "Moi aussi ❤️";
+    spawnHearts();
+  }
+
+  function noClick() {
+    noClicks++;
+    document.getElementById('counter').innerHTML =
+      `Clics sur NON : ${noClicks} / 100`;
+
+    // Le bouton OUI grossit
+    yesScale += 0.03;
+    document.getElementById('yesBtn').style.transform =
+      `scale(${yesScale})`;
+
+    // Échange à 70 clics
+    if (noClicks === 70 && !swapped) {
+      const container = document.getElementById('buttonContainer');
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      container.insertBefore(noBtn, yesBtn);
+      swapped = true;
+    }
+
+    // Disparition à 99 clics
+    if (noClicks === 99) {
+      document.getElementById('noBtn').style.display = "none";
+      document.getElementById('counter').innerHTML =
+        "Impossible de dire non 😏";
+    }
+  }
+
+  function spawnHearts() {
+    for (let i = 0; i < 15; i++) {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerHTML = "❤️";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = (2 + Math.random() * 2) + "s";
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 4000);
+    }
+  }
+</script>
+
 </body>
 </html>
