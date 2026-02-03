@@ -15,7 +15,7 @@
   .buttons {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 120px; /* Plus d'espace entre OUI et NON */
     margin-top: 30px;
   }
 
@@ -24,19 +24,7 @@
     padding: 12px 25px;
     cursor: pointer;
     transition: transform 0.2s ease;
-  }
-
-  /* Tremblement du bouton NON */
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    50% { transform: translateX(4px); }
-    75% { transform: translateX(-4px); }
-    100% { transform: translateX(0); }
-  }
-
-  #noBtn {
-    animation: shake 0.4s infinite;
+    position: relative;
   }
 
   #counter {
@@ -48,7 +36,7 @@
   .heart {
     position: fixed;
     bottom: -20px;
-    font-size: 24px;
+    font-size: 26px;
     animation: floatUp 3s linear forwards;
     pointer-events: none;
   }
@@ -76,7 +64,7 @@
   <button id="noBtn" onclick="noClick()">NON</button>
 </div>
 
-<p id="counter">Clics sur NON : 0 / 100</p>
+<p id="counter">Clics sur NON : 0 / 50</p>
 <p id="displayTextHere"></p>
 
 <script>
@@ -92,15 +80,15 @@
   function noClick() {
     noClicks++;
     document.getElementById('counter').innerHTML =
-      `Clics sur NON : ${noClicks} / 100`;
+      `Clics sur NON : ${noClicks} / 50`;
 
     // Le bouton OUI grossit
-    yesScale += 0.03;
+    yesScale += 0.04;
     document.getElementById('yesBtn').style.transform =
       `scale(${yesScale})`;
 
-    // Échange à 70 clics
-    if (noClicks === 70 && !swapped) {
+    // Échange à 35 clics
+    if (noClicks === 35 && !swapped) {
       const container = document.getElementById('buttonContainer');
       const yesBtn = document.getElementById('yesBtn');
       const noBtn = document.getElementById('noBtn');
@@ -108,8 +96,8 @@
       swapped = true;
     }
 
-    // Disparition à 99 clics
-    if (noClicks === 99) {
+    // Disparition à 49 clics
+    if (noClicks === 49) {
       document.getElementById('noBtn').style.display = "none";
       document.getElementById('counter').innerHTML =
         "Impossible de dire non 😏";
@@ -117,7 +105,7 @@
   }
 
   function spawnHearts() {
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 18; i++) {
       const heart = document.createElement("div");
       heart.className = "heart";
       heart.innerHTML = "❤️";
