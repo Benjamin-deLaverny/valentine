@@ -84,7 +84,7 @@
 <p>Veux-tu être ma valentine ?</p>
 
 <div class="game">
-  <div class="bar">
+  <div class="bar" id="bar">
     <div class="yesZone"></div>
     <div class="noZone" id="noZone"></div>
     <div class="cursor" id="cursor"></div>
@@ -97,16 +97,34 @@
 
 <script>
   let pos = 0;
-  let speed = 7; // rapide
   let direction = 1;
 
   const cursor = document.getElementById("cursor");
+  const bar = document.getElementById("bar");
   const noZone = document.getElementById("noZone");
   const result = document.getElementById("result");
 
   function moveCursor() {
+    const barRect = bar.getBoundingClientRect();
+    const noRect = noZone.getBoundingClientRect();
+
+    // Position réelle du curseur
+    const cursorCenter = barRect.left + pos + 4;
+
+    // Vitesse variable
+    let speed;
+    if (cursorCenter >= noRect.left) {
+      speed = 9; // zone rouge = rapide
+    } else {
+      speed = 3; // zone verte = lent
+    }
+
     pos += speed * direction;
-    if (pos <= 0 || pos >= 352) direction *= -1;
+
+    if (pos <= 0 || pos >= barRect.width - 8) {
+      direction *= -1;
+    }
+
     cursor.style.left = pos + "px";
     requestAnimationFrame(moveCursor);
   }
@@ -118,18 +136,14 @@
     const n = noZone.getBoundingClientRect();
 
     if (c.left >= n.left && c.right <= n.right) {
-      showBrokenHeart();
+      result.innerHTML = "💔";
     } else {
+      result.innerHTML = "❤️";
       spawnHearts();
     }
   }
 
-  function showBrokenHeart() {
-    result.innerHTML = "💔";
-  }
-
   function spawnHearts() {
-    result.innerHTML = "❤️";
     for (let i = 0; i < 20; i++) {
       const heart = document.createElement("div");
       heart.className = "heart";
