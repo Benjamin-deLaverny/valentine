@@ -2,36 +2,44 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Valentine – Timing parfait</title>
+<title>Valentine – Le choix</title>
 
 <style>
   body {
     font-family: Arial, sans-serif;
     text-align: center;
-    margin-top: 50px;
+    margin-top: 60px;
     overflow: hidden;
   }
 
   .game {
-    width: 320px;
-    margin: 30px auto;
+    width: 360px;
+    margin: 40px auto;
   }
 
   .bar {
     width: 100%;
-    height: 14px;
-    background: #ddd;
+    height: 16px;
+    background: #ccc;
     border-radius: 10px;
     position: relative;
     overflow: hidden;
   }
 
-  .zone {
+  .yesZone {
     position: absolute;
-    width: 24px;
     height: 100%;
+    width: 88%;
     background: #7CFC90;
-    left: 148px;
+    left: 0;
+  }
+
+  .noZone {
+    position: absolute;
+    height: 100%;
+    width: 12%;
+    background: #ff6b6b;
+    right: 0;
   }
 
   .cursor {
@@ -42,36 +50,23 @@
     left: 0;
   }
 
-  /* Boutons */
-  .buttons {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    gap: 25px;
-    justify-content: center;
+  button {
+    font-size: 20px;
+    padding: 14px 30px;
+    cursor: pointer;
     margin-top: 40px;
   }
 
-  button {
-    font-size: 18px;
-    padding: 12px 24px;
-    cursor: pointer;
-  }
-
-  #noBtn {
-    font-size: 14px;
-    padding: 6px 14px;
-  }
-
-  #fails {
-    font-size: 28px;
-    margin-top: 20px;
+  #result {
+    font-size: 36px;
+    margin-top: 25px;
   }
 
   /* Cœurs */
   .heart {
     position: fixed;
     bottom: -20px;
-    font-size: 26px;
+    font-size: 28px;
     animation: floatUp 3s linear forwards;
     pointer-events: none;
   }
@@ -87,85 +82,55 @@
 
 <h1>Salut Ines</h1>
 <p>Veux-tu être ma valentine ?</p>
-<p><b>Pour dire NON : clique pile au bon moment 😏</b></p>
 
 <div class="game">
   <div class="bar">
-    <div class="zone" id="zone"></div>
+    <div class="yesZone"></div>
+    <div class="noZone" id="noZone"></div>
     <div class="cursor" id="cursor"></div>
   </div>
 </div>
 
-<div class="buttons">
-  <button onclick="yesClick()">OUI</button>
-  <button onclick="yesClick()">OUI</button>
-  <button onclick="yesClick()">OUI</button>
+<button onclick="selectChoice()">SÉLECTIONNER</button>
 
-  <button onclick="yesClick()">OUI</button>
-  <button id="noBtn" onclick="noClick()">NON</button>
-  <button onclick="yesClick()">OUI</button>
-
-  <button onclick="yesClick()">OUI</button>
-  <button onclick="yesClick()">OUI</button>
-  <button onclick="yesClick()">OUI</button>
-</div>
-
-<div id="fails"></div>
+<div id="result"></div>
 
 <script>
   let pos = 0;
-  let speed = 6.5; // Curseur rapide
+  let speed = 7; // rapide
   let direction = 1;
-  let fails = 0;
-  let playing = true;
 
   const cursor = document.getElementById("cursor");
-  const zone = document.getElementById("zone");
-  const noBtn = document.getElementById("noBtn");
-  const failsDisplay = document.getElementById("fails");
+  const noZone = document.getElementById("noZone");
+  const result = document.getElementById("result");
 
   function moveCursor() {
-    if (!playing) return;
-
     pos += speed * direction;
-    if (pos <= 0 || pos >= 312) direction *= -1;
+    if (pos <= 0 || pos >= 352) direction *= -1;
     cursor.style.left = pos + "px";
-
     requestAnimationFrame(moveCursor);
   }
 
   moveCursor();
 
-  function noClick() {
-    if (!playing) return;
-
+  function selectChoice() {
     const c = cursor.getBoundingClientRect();
-    const z = zone.getBoundingClientRect();
+    const n = noZone.getBoundingClientRect();
 
-    if (!(c.left >= z.left && c.right <= z.right)) {
-      fails++;
+    if (c.left >= n.left && c.right <= n.right) {
       showBrokenHeart();
-
-      if (fails >= 10) {
-        noBtn.style.display = "none";
-        playing = false;
-      }
     } else {
-      playing = false;
-      noBtn.disabled = true;
+      spawnHearts();
     }
   }
 
   function showBrokenHeart() {
-    failsDisplay.innerHTML = "💔".repeat(fails);
-  }
-
-  function yesClick() {
-    spawnHearts();
+    result.innerHTML = "💔";
   }
 
   function spawnHearts() {
-    for (let i = 0; i < 18; i++) {
+    result.innerHTML = "❤️";
+    for (let i = 0; i < 20; i++) {
       const heart = document.createElement("div");
       heart.className = "heart";
       heart.innerHTML = "❤️";
