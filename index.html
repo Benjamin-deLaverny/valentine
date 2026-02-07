@@ -66,7 +66,6 @@
 <p>Regarde bien où est le NON 😏</p>
 
 <div class="cards" id="cards"></div>
-
 <div id="message"></div>
 
 <script>
@@ -80,6 +79,7 @@
   function init() {
     container.innerHTML = "";
     message.innerHTML = "";
+    cards = [];
     mixing = true;
 
     let values = ["❤️","❤️","❤️","❤️","💔"];
@@ -97,15 +97,11 @@
       cards.push(card);
     });
 
-    // Après 2 secondes on cache
     setTimeout(hideCards, 2000);
   }
 
   function hideCards() {
-    cards.forEach(card => {
-      card.classList.add("hidden");
-    });
-
+    cards.forEach(card => card.classList.add("hidden"));
     setTimeout(startMixing, 500);
   }
 
@@ -116,16 +112,14 @@
       let i = Math.floor(Math.random() * 5);
       let j = Math.floor(Math.random() * 5);
 
-      if (i !== j) {
-        swapCards(cards[i], cards[j]);
-      }
+      if (i !== j) swapCards(cards[i], cards[j]);
 
       mixCount++;
-      if (mixCount > 60) { // nombre d'échanges
+      if (mixCount > 60) {
         clearInterval(interval);
         mixing = false;
       }
-    }, 80); // vitesse mélange (plus petit = plus rapide)
+    }, 80);
   }
 
   function swapCards(card1, card2) {
@@ -142,7 +136,10 @@
   function choose(card) {
     if (mixing) return;
 
-    card.classList.remove("hidden");
+    mixing = true;
+
+    // Révèle toutes les cartes
+    cards.forEach(c => c.classList.remove("hidden"));
 
     if (card.dataset.value === "💔") {
       message.innerHTML = "💔";
