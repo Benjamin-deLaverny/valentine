@@ -2,67 +2,69 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Valentine – Le choix</title>
+<title>Valentine – Jeu des cartes</title>
 
 <style>
   body {
     font-family: Arial, sans-serif;
     text-align: center;
     margin-top: 60px;
-    overflow: hidden;
+    background: #fafafa;
   }
 
-  .game {
-    width: 360px;
-    margin: 40px auto;
+  h1 {
+    margin-bottom: 10px;
   }
 
-  .bar {
-    width: 100%;
-    height: 16px;
-    background: #ccc;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .yesZone {
-    position: absolute;
-    height: 100%;
-    width: 88%;
-    background: #7CFC90;
-    left: 0;
-  }
-
-  .noZone {
-    position: absolute;
-    height: 100%;
-    width: 12%;
-    background: #ff6b6b;
-    right: 0;
-  }
-
-  .cursor {
-    position: absolute;
-    width: 8px;
-    height: 100%;
-    background: #222;
-    left: 0;
-  }
-
-  button {
-    font-size: 20px;
-    padding: 14px 30px;
-    cursor: pointer;
+  .cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
     margin-top: 40px;
   }
 
-  #result {
-    font-size: 36px;
-    margin-top: 25px;
+  .card {
+    width: 90px;
+    height: 130px;
+    background: #444;
+    border-radius: 12px;
+    cursor: pointer;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
   }
 
-  /* Cœurs */
+  .card.flip {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    backface-visibility: hidden;
+  }
+
+  .front {
+    background: #e63946;
+    color: white;
+  }
+
+  .back {
+    background: white;
+    transform: rotateY(180deg);
+  }
+
+  #message {
+    font-size: 36px;
+    margin-top: 30px;
+  }
+
   .heart {
     position: fixed;
     bottom: -20px;
@@ -81,70 +83,82 @@
 <body>
 
 <h1>Salut Ines</h1>
-<p>Veux-tu être ma valentine ?</p>
+<p>Choisis une carte 😏</p>
 
-<div class="game">
-  <div class="bar" id="bar">
-    <div class="yesZone"></div>
-    <div class="noZone" id="noZone"></div>
-    <div class="cursor" id="cursor"></div>
-  </div>
-</div>
+<div class="cards" id="cards"></div>
 
-<button onclick="selectChoice()">SÉLECTIONNER</button>
-
-<div id="result"></div>
+<div id="message"></div>
 
 <script>
-  let pos = 0;
-  let direction = 1;
+  const cardsContainer = document.getElementById("cards");
+  const message = document.getElementById("message");
 
-  const cursor = document.getElementById("cursor");
-  const bar = document.getElementById("bar");
-  const noZone = document.getElementById("noZone");
-  const result = document.getElementById("result");
+  let cardsData = [];
 
-  function moveCursor() {
-    const barRect = bar.getBoundingClientRect();
-    const noRect = noZone.getBoundingClientRect();
+  function setupGame() {
+    cardsContainer.innerHTML = "";
+    message.innerHTML = "";
 
-    // Position réelle du curseur
-    const cursorCenter = barRect.left + pos + 4;
+    // 4 OUI et 1 NON
+    cardsData = ["❤️", "❤️", "❤️", "❤️", "💔"];
 
-    // Vitesse variable
-    let speed;
-    if (cursorCenter >= noRect.left) {
-      speed = 9; // zone rouge = rapide
-    } else {
-      speed = 3; // zone verte = lent
-    }
+    // Mélange initial
+    cardsData.sort(() => Math.random() - 0.5);
 
-    pos += speed * direction;
+    cardsData.forEach((value, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.index = index;
 
-    if (pos <= 0 || pos >= barRect.width - 8) {
-      direction *= -1;
-    }
+      card.innerHTML = `
+        <div class="card-face front">?</div>
+        <div class="card-face back">${value}</div>
+      `;
 
-    cursor.style.left = pos + "px";
-    requestAnimationFrame(moveCursor);
+      card.onclick = () => pickCard(card);
+
+      cardsContainer.appendChild(card);
+    });
   }
 
-  moveCursor();
+  function pickCard(card) {
+    // Mélange rapide avant révélation
+    shuffleCards();
 
-  function selectChoice() {
-    const c = cursor.getBoundingClientRect();
-    const n = noZone.getBoundingClientRect();
+    setTimeout(() => {
+      const chosenIndex = card.dataset.index;
 
-    if (c.left >= n.left && c.right <= n.right) {
-      result.innerHTML = "💔";
-    } else {
-      result.innerHTML = "❤️";
+      // Si par miracle c'était 💔 → on le transforme en ❤️ 😈
+      if (cardsData[chosenIndex] === "💔") {
+        cardsData[chosenIndex] = "❤️";
+        card.querySelector(".back").innerHTML = "❤️";
+      }
+
+      card.classList.add("flip");
+      message.innerHTML = "❤️";
       spawnHearts();
-    }
+    }, 600);
+  }
+
+  function shuffleCards() {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+      card.style.transition = "transform 0.3s";
+      card.style.transform = `translateX(${Math.random() * 20 - 10}px)`;
+    });
+
+    // Le NON change discrètement de place
+    cardsData.sort(() => Math.random() - 0.5);
+
+    setTimeout(() => {
+      cards.forEach(card => {
+        card.style.transform = "translateX(0)";
+      });
+    }, 300);
   }
 
   function spawnHearts() {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 18; i++) {
       const heart = document.createElement("div");
       heart.className = "heart";
       heart.innerHTML = "❤️";
@@ -154,6 +168,8 @@
       setTimeout(() => heart.remove(), 4000);
     }
   }
+
+  setupGame();
 </script>
 
 </body>
