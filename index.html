@@ -12,6 +12,10 @@
     background: #fafafa;
   }
 
+  h1 {
+    font-size: 32px;
+  }
+
   .cards {
     position: relative;
     width: 600px;
@@ -20,8 +24,8 @@
   }
 
   .card {
-    width: 90px;
-    height: 130px;
+    width: 100px;
+    height: 140px;
     background: white;
     border-radius: 12px;
     position: absolute;
@@ -29,7 +33,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 40px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
     cursor: pointer;
     transition: left 0.15s linear;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -62,8 +68,7 @@
 
 <body>
 
-<h1>Salut Ines</h1>
-<p>Regarde bien où est le NON 😏</p>
+<h1>Veux-tu être ma valentine 💘</h1>
 
 <div class="cards" id="cards"></div>
 <div id="message"></div>
@@ -72,7 +77,7 @@
   const container = document.getElementById("cards");
   const message = document.getElementById("message");
 
-  const positions = [50, 170, 290, 410, 530];
+  const positions = [40, 170, 300, 430, 560];
   let cards = [];
   let mixing = true;
 
@@ -82,7 +87,14 @@
     cards = [];
     mixing = true;
 
-    let values = ["❤️","❤️","❤️","❤️","💔"];
+    let values = [
+      "OUI ❤️",
+      "OUI ❤️",
+      "OUI ❤️",
+      "OUI ❤️",
+      "NON 💔"
+    ];
+
     values.sort(() => Math.random() - 0.5);
 
     values.forEach((val, i) => {
@@ -115,11 +127,11 @@
       if (i !== j) swapCards(cards[i], cards[j]);
 
       mixCount++;
-      if (mixCount > 60) {
+      if (mixCount > 70) {
         clearInterval(interval);
         mixing = false;
       }
-    }, 80);
+    }, 70); // vitesse rapide
   }
 
   function swapCards(card1, card2) {
@@ -138,10 +150,9 @@
 
     mixing = true;
 
-    // Révèle toutes les cartes
     cards.forEach(c => c.classList.remove("hidden"));
 
-    if (card.dataset.value === "💔") {
+    if (card.dataset.value === "NON 💔") {
       message.innerHTML = "💔";
     } else {
       message.innerHTML = "❤️";
